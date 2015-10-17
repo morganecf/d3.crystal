@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+
+	<title> Force Crystal Test </title>
+
+	<!-- Bootstrap css --> 
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+
+	<style>
+		body {
+			background: #324441;
+		}
+		path {
+			fill: none;
+			stroke: #fff;
+			stroke-width: 3px;
+		}
+	</style>
+
+</head>
+
+<body>
+  <div class="container"> </div>
+</body>
+
+<!-- D3.js --> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+
+<!-- Jquery --> 
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- D3.Crystal --> 
+<script src="d3.crystal.js"></script>
+
+
+<script type="text/javascript">
+	
+	// Container width/height 
+	var width = 800;
+	var height = 600;
+
+	// Test data 
+	var data = {
+		nodes: [
+			{name: 'buffy'},
+			{name: 'willow'},
+			{name: 'xander'},
+			{name: 'spike'},
+			{name: 'dawn'},
+			{name: 'tara'},
+			{name: 'anya'},
+			{name: 'giles'}
+		],
+		links: [
+			{source: 0, target: 1},
+			{source: 0, target: 2},
+			{source: 0, target: 3},
+			{source: 0, target: 4},
+			{source: 0, target: 7},
+			{source: 2, target: 0},
+			{source: 2, target: 1},
+			{source: 2, target: 6},
+			{source: 1, target: 0},
+			{source: 1, target: 4},
+			{source: 1, target: 5},
+			{source: 3, target: 0},
+			{source: 3, target: 4},
+			{source: 7, target: 6},
+		]
+	};
+
+	// Svg container that will host the visualization
+	var svg = d3.select(".container").append("svg")
+	  .attr("width", 800)
+	  .attr("height", 600)
+	  .attr("id", "svg_container");
+
+	// Generate the basic force layout 
+	var force = d3.layout.force()
+		.gravity(1)
+		.charge(-3000)
+		.linkDistance(50)
+		.size([width, height]);
+		//.crystal();
+
+	var link, node;
+
+	setTimeout(function () {
+
+		force.nodes(data.nodes).links(data.links).start();
+	    for (var i = 10000; i > 0; --i) force.tick();
+	    force.stop();
+
+		// Render edge links
+		link = svg.selectAll("line")
+			.data(data.links)
+			.enter()
+			.append("line")
+			.attr("class", "link")
+			.attr("id", function (d) { return d.source.name + "-" + d.target.name; })
+			.attr("stroke-width", 3)
+			.attr("stroke", "#fff")
+			.attr("x1", function (d) { return d.source.x; })
+			.attr("y1", function (d) { return d.source.y; })
+			.attr("x2", function (d) { return d.target.x; })
+			.attr("y2", function (d) { return d.target.y; })
+			.style("visibility", "hidden");
+
+		// Render nodes
+		node = svg.selectAll("circle")
+			.data(data.nodes)
+			.enter()
+			.append("circle")
+			.attr("class", "node")
+			.attr("id", function (d) { return d.name; })
+			.attr("r", 15)
+			.attr("fill", "#fff")
+			.attr("transform", function (d) {  return 'translate(' + [d.x, d.y] + ')'; })
+			.style("visibility", "hidden")
+			.call(force.drag);
+		
+		animate(node[0], link[0], 600, force);
+
+	}, 10);
+
+	/*
+		Should be able to animate from multiple points 
+	*/
+	function animate (nodes, links, speed, force) {
+		// Create graph from nodes and links
+		var graph = {};
+		var link;
+		for (var i = 0; i < links.length; i++) {
+			link = d3.select(links[i])[0][0].__data__;
+			if (link.source.name in graph) graph[link.source.name].push(link);
+			else graph[link.source.name] = [link];
+		}
+
+		// Name to index mapping 
+		var mapping = {};
+		nodes.forEach(function (n, i) { mapping[n.name] = i; });
+
+		var hidden = nodes.map(function (n) { return n; });
+		var ms = speed;
+
+		// Path constructor 
+		var line = d3.svg.line();
+
+		var paths = []; 
+		var edge_ids = [];
+
+		var step = function () {
+			if (hidden.length > 0) {
+				// Show node 
+				var node = d3.select(hidden.pop());
+				node.style("visibility", "visible");
+				var data;
+				node.attr('d', function (d) { data = d; });
+
+				// Find the node's associated edges 
+				var edges = graph[data.name];
+				if (edges) {
+					var edge_id, points, path;
+					for (var i = 0; i < edges.length; i++) {
+						edge_id = edges[i].source.name + '-' + edges[i].target.name;
+
+						// use px/py or x/y??? 
+						points = [[edges[i].source.x, edges[i].source.y], [edges[i].target.x, edges[i].target.y]];
+
+						// Create and animate path 
+						path = svg.append("path")
+							.attr("d", line(points))
+							.attr("class", "temp-path")
+							.transition()
+							.duration(ms)
+							.attrTween("stroke-dasharray", tweenDash);
+
+						edge_ids.push(edge_id);
+						paths.push(path);
+					}
+				}
+
+				setTimeout(step, ms);
+			}
+
+			// When we're done, remove the paths and show the real edges 
+			else {
+				edge_ids.forEach(function (eid) { d3.select('#' + eid).style("visibility", "visible"); })
+				$(".temp-path").remove();
+
+				// Also resume the force 
+				//force.start();
+			}
+		};
+
+		function tweenDash () {
+			var l = this.getTotalLength();
+			var i = d3.interpolateString("0," + l, l + "," + l);
+			return function (t) { return i(t); };
+		}
+
+		setTimeout(step, 1);
+
+		
+	}
+
+</script>
+
+</html>
