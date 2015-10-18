@@ -1,5 +1,4 @@
-/*
-	- no jquery 
+<!--
 	- minify 
 
 	for demo page 
@@ -9,9 +8,270 @@
 
 	- original (no crystal)
 	- varied speed 
-	- low speed
 	- appearance rules:
 		1) random walk
 		2) start node (BFS)
 		3) no rule - nodes might pop up without edges
-*/
+-->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+
+	<title> Force Crystal Demo </title>
+
+	<!-- Bootstrap css --> 
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+
+	<style>
+		body {
+			background: #333;
+			color: #fff;
+		}
+		.container {
+			margin: 0;
+			padding: 0;
+		}
+
+		#box1 { background: #D64541; height: 350px; }
+		#box2 { background: #3A539B; height: 350px; }
+		#box3 { background: #019875; height: 350px; }
+		#box4 { background: #913D88; height: 350px; }
+
+		.col-lg-5 {
+			text-align: center;
+		}
+
+		.glyphicon-play {
+			margin-top: 17%;
+			font-size: 150px;
+			opacity: 0.75;
+		}
+		.glyphicon-play:hover {
+			opacity: 1;
+			cursor: pointer;
+		}
+
+		#promo {
+			text-align: center;
+		}
+		
+		path {
+			fill: none;
+			stroke: #fff;
+			stroke-width: 3px;
+		}
+	</style>
+
+</head>
+
+<body>
+  <div class="container"> 
+  	<div class="row">
+  		<div class="col-lg-5" id="box1">
+  			<span class="glyphicon glyphicon-play" id="box1-play"></span>
+  		</div>
+  		<div class="col-lg-5" id="box2">
+  			<span class="glyphicon glyphicon-play" id="box2-play"></span>
+  		</div>
+  		<div class="col-lg-2" id="promo">
+  			<h4>D3.crystal</h4>
+  			<h5>A nicer way of rendering force layouts </h5>
+  		</div>
+  	</div>
+  	<div class="row">
+  		<div class="col-lg-5" id="box3">
+  			<span class="glyphicon glyphicon-play" id="box3-play"></span>
+  		</div>
+  		<div class="col-lg-5" id="box4">
+  			<span class="glyphicon glyphicon-play" id="box4-play"></span>
+  		</div>
+  		<div class="col-lg-2">
+  			<a href="www.github.com/morganecf/d3.crystal">Download here!</a>
+  		</div>
+  	</div>
+  </div>
+</body>
+
+<!-- D3.js --> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+
+<!-- D3.Crystal --> 
+<script src="d3.crystal.js"></script>
+
+<!-- Jquery --> 
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script type="text/javascript">
+
+	// Test data 
+	var data = {
+		nodes: [
+			{name: 'buffy'},
+			{name: 'willow'},
+			{name: 'xander'},
+			{name: 'spike'},
+			{name: 'dawn'},
+			{name: 'tara'},
+			{name: 'anya'},
+			{name: 'giles'}
+		],
+		links: [
+			{source: 0, target: 1},
+			{source: 0, target: 2},
+			{source: 0, target: 3},
+			{source: 0, target: 4},
+			{source: 0, target: 7},
+			{source: 2, target: 0},
+			{source: 2, target: 1},
+			{source: 2, target: 6},
+			{source: 1, target: 0},
+			{source: 1, target: 4},
+			{source: 1, target: 5},
+			{source: 3, target: 0},
+			{source: 3, target: 4},
+			{source: 7, target: 6},
+		]
+	};
+
+	/* Regular layout - no crystal */
+	var box1_layout = function (svg, link, node, width, height) {
+		var force = d3.crystal()
+			.gravity(1)
+			.charge(-3000)
+			.linkDistance(50)
+			.size([width, height]);
+
+		node.call(force.drag);
+
+		force.nodes(data.nodes).links(data.links)
+			.crystallize_nodes(node).crystallize_links(link)
+			.crystallize({
+				iter: 500000,			/* # of iterations simulation runs for - default is 100000 */
+				ms: 500,				/* Animation interval - default is 300 ms */
+				start_node: 'willow'	/* Node to start at - must be name of node */
+			});
+	};
+
+	/* Crystal layout - default params */
+	var box2_layout = function (svg, link, node, width, height) {
+		var force = d3.crystal()
+			.gravity(1)
+			.charge(-3000)
+			.linkDistance(50)
+			.size([width, height]);
+
+		node.call(force.drag);
+
+		force.nodes(data.nodes).links(data.links)
+			.crystallize_nodes(node).crystallize_links(link)
+			.crystallize({
+				iter: 500000,			/* # of iterations simulation runs for - default is 100000 */
+				ms: 500,				/* Animation interval - default is 300 ms */
+				start_node: 'willow'	/* Node to start at - must be name of node */
+			});
+	};
+
+
+	/* Crystal layout - specific params #1 */
+	var box3_layout = function (svg, link, node, width, height) {
+		var force = d3.crystal()
+			.gravity(1)
+			.charge(-3000)
+			.linkDistance(50)
+			.size([width, height]);
+
+		node.call(force.drag);
+
+		force.nodes(data.nodes).links(data.links)
+			.crystallize_nodes(node).crystallize_links(link)
+			.crystallize({
+				iter: 500000,			/* # of iterations simulation runs for - default is 100000 */
+				ms: 500,				/* Animation interval - default is 300 ms */
+				start_node: 'willow'	/* Node to start at - must be name of node */
+			});
+	};
+
+	/* Crystal layout - specific params #2 */
+	var box4_layout = function (svg, link, node, width, height) {
+		var force = d3.crystal()
+			.gravity(1)
+			.charge(-3000)
+			.linkDistance(50)
+			.size([width, height]);
+
+		node.call(force.drag);
+
+		force.nodes(data.nodes).links(data.links)
+			.crystallize_nodes(node).crystallize_links(link)
+			.crystallize({
+				iter: 500000,			/* # of iterations simulation runs for - default is 100000 */
+				ms: 500,				/* Animation interval - default is 300 ms */
+				start_node: 'willow'	/* Node to start at - must be name of node */
+			});
+	};
+
+
+	var layouts = [box1_layout, box2_layout, box3_layout, box4_layout];
+
+	function create_base_layout (bid) {
+		var width = $(bid).width();
+		var height = $(bid).height();
+
+		// Svg container that will host the visualization
+		var svg = d3.select(bid).append("svg")
+			.attr("width", width)
+			.attr("height", height)
+			.attr("id", "svg_container");
+
+		// SVG link edges 
+		var link = svg.selectAll("line")
+			.data(data.links)
+			.enter()
+			.append("line")
+			.attr("class", "link")
+			.attr("id", function (d) { return d.source.name + "-" + d.target.name; })
+			.attr("stroke-width", 3)
+			.attr("stroke", "#fff");
+
+		// SVG nodes
+		var node = svg.selectAll("circle")
+			.data(data.nodes)
+			.enter()
+			.append("circle")
+			.attr("class", "node")
+			.attr("id", function (d) { return d.name; })
+			.attr("r", 15)
+			.attr("fill", "#fff");
+
+		var box_num = parseInt(bid.split("-")[0].split("box")[1]) - 1;
+		layouts[box_num](svg, link, node, width, height);
+	}
+
+	var curr_play;
+
+	$(".glyphicon-play").click(function () {
+		// Destroy any other simulations 
+		$("svg").remove();
+		$(".link").remove();
+		$(".node").remove();
+
+		// Show the previous simulation's play button
+		if (curr_play) curr_play.show();
+
+		// play button 
+		var pid = $(this).attr('id');
+		curr_play = $("#" + pid);
+		curr_play.hide();
+
+		// box  
+		var bid = "#" + pid.split("-")[0];
+
+		create_base_layout(bid);
+	});
+
+
+</script>
+
+</html>

@@ -71,15 +71,17 @@ d3.crystal = function () {
 	// Return nodes in BFS order  
 	var bfs = function (start, graph, mapping) { return []; };
 
-	/* The svg nodes and links */
-	var node, link;
+	/* The svg nodes and links and container */
+	var node, link, svg;
 
 	/* Load the svg nodes and links */
 	force.crystallize_nodes = function (svg_node) {
+		svg = d3.select(svg_node[0].parentNode);
 		node = svg_node;
 		return this;
 	};
 	force.crystallize_links = function (svg_link) {
+		svg = d3.select(svg_link[0].parentNode);
 		link = svg_link;
 		return this;
 	}
@@ -93,7 +95,7 @@ d3.crystal = function () {
 	    for (var i = iter; i > 0; --i) this.tick();
 	    this.stop();
 		
-		node.attr("transform", function (d) {  console.log(d); return 'translate(' + [d.x, d.y] + ')'; })
+		node.attr("transform", function (d) { return 'translate(' + [d.x, d.y] + ')'; })
 			.attr("id", function (d) { return d.name; })
 			.style("visibility", "hidden");
 
@@ -135,6 +137,7 @@ d3.crystal = function () {
 		var crystal_force = this;
 		var link_svg = link;
 		var node_svg = node;
+		var svg_container = svg;
 
 		var step = function () {
 			if (hidden.length > 0) {
@@ -155,7 +158,7 @@ d3.crystal = function () {
 						points = [[edges[i].source.x, edges[i].source.y], [edges[i].target.x, edges[i].target.y]];
 
 						// Create and animate path 
-						path = svg.append("path")
+						path = svg_container.append("path")
 							.attr("d", line(points))
 							.attr("class", "temp-path")
 							.transition()
