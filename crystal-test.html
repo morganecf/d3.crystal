@@ -102,8 +102,11 @@
 
 	force.nodes(data.nodes).links(data.links)
 		.crystallize_nodes(node).crystallize_links(link)
-		.crystallize();
-	
+		.crystallize({
+			iter: 500000,			/* # of iterations simulation runs for - default is 100000 */
+			ms: 500,				/* Animation interval - default is 300 ms */
+			start_node: 'willow'	/* Node to start at - must be name of node */
+		});
 
 </script>
 
