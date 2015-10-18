@@ -1,17 +1,6 @@
 <!--
 	- minify 
-
-	for demo page 
-	do four boxes, each animated in turn (with bottom portion sliding up to display what it's demoing)
-
-	- also make it based on buffy characters 
-
-	- original (no crystal)
-	- varied speed 
-	- appearance rules:
-		1) random walk
-		2) start node (BFS)
-		3) no rule - nodes might pop up without edges
+	- responsive 
 -->
 
 <!DOCTYPE html>
@@ -24,10 +13,17 @@
 	<!-- Bootstrap css --> 
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 
+	<!-- Octicons --> 
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.1.0/octicons.css" rel="stylesheet"/>
+
+	<!-- Custom fonts --> 
+	<link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,300|Source+Code+Pro' rel='stylesheet' type='text/css'>
+
 	<style>
 		body {
 			background: #333;
 			color: #fff;
+			font-family: 'Fira Sans', sans-serif;
 		}
 		.container {
 			margin: 0;
@@ -56,6 +52,36 @@
 		#promo {
 			text-align: center;
 		}
+		#entropy {
+			font-weight: 300;
+		}
+
+		#github {
+			margin-top: 60px;
+		}
+		#download {
+			text-align: center;
+		}
+		#download-a {
+			font-size: 20px;
+			color: #fff;
+		}
+		#download-a:hover {
+			color: #D64541;
+			text-decoration: none;
+		}
+		.octicon-octoface {
+			font-size: 100px;
+		}
+
+		.code {
+			background: #F2F1EF;
+			color: #6C7A89;
+			font-family: 'Source Code Pro', ;
+			font-size: 9px;
+			padding: 5px;
+			text-align: left;
+		}
 		
 		path {
 			fill: none;
@@ -76,8 +102,22 @@
   			<span class="glyphicon glyphicon-play" id="box2-play"></span>
   		</div>
   		<div class="col-lg-2" id="promo">
-  			<h4>D3.crystal</h4>
-  			<h5>A nicer way of rendering force layouts </h5>
+  			<h1>D3.crystal</h1>
+  			<h4>A less chaotic way of rendering force layouts </h4>
+  			<h5 id="entropy">Because entropy only leads to death</h5>
+  			<p class="code">
+  				<span>// Initialize</span><br>
+				<strong>var force = d3.crystal();</strong><br><br>
+				<span>// The usual force layout</span><br>
+				<strong>force.gravity(1)</strong><br>
+				<strong>	.charge(-3000)</strong><br>
+				<strong>	.linkDistance(50);</strong><br>
+				<br>
+				<span>// The extra stuff</span><br>
+				<strong>force.crystallize_nodes(node)</strong><br>
+				<strong>	.crystallize_links(link)</strong><br>
+				<strong>	.crystallize();</strong><br>
+  			</p>
   		</div>
   	</div>
   	<div class="row">
@@ -87,8 +127,14 @@
   		<div class="col-lg-5" id="box4">
   			<span class="glyphicon glyphicon-play" id="box4-play"></span>
   		</div>
-  		<div class="col-lg-2">
-  			<a href="www.github.com/morganecf/d3.crystal">Download here!</a>
+  		<div class="col-lg-2" id="github">
+  			<p id="download">
+	  			<a href="http://www.github.com/morganecf/d3.crystal" target="_blank" id="download-a">
+	  				<span class="mega-octicon octicon-octoface"></span>
+	  				<br>
+	  				<span>get the code</span>
+	  			</a>
+	  		</p>
   		</div>
   	</div>
   </div>
@@ -107,55 +153,25 @@
 
 	// Test data 
 	var data = {
-		nodes: [
-			{name: 'buffy'},
-			{name: 'willow'},
-			{name: 'xander'},
-			{name: 'spike'},
-			{name: 'dawn'},
-			{name: 'tara'},
-			{name: 'anya'},
-			{name: 'giles'}
-		],
-		links: [
-			{source: 0, target: 1},
-			{source: 0, target: 2},
-			{source: 0, target: 3},
-			{source: 0, target: 4},
-			{source: 0, target: 7},
-			{source: 2, target: 0},
-			{source: 2, target: 1},
-			{source: 2, target: 6},
-			{source: 1, target: 0},
-			{source: 1, target: 4},
-			{source: 1, target: 5},
-			{source: 3, target: 0},
-			{source: 3, target: 4},
-			{source: 7, target: 6},
+		nodes: [{name: 'buffy'},{name: 'willow'},{name: 'xander'},{name: 'spike'},{name: 'dawn'},{name: 'tara'},{name: 'anya'},{name: 'giles'}],
+		links: [{source: 0, target: 1},{source: 0, target: 2},{source: 0, target: 3},{source: 0, target: 4},{source: 0, target: 7},{source: 2, target: 0},{source: 2, target: 1},{source: 2, target: 6},{source: 1, target: 0},{source: 1, target: 4},{source: 1, target: 5},{source: 3, target: 0},{source: 3, target: 4},{source: 7, target: 6},
 		]
 	};
 
-	/* Regular layout - no crystal */
-	var box1_layout = function (svg, link, node, width, height) {
-		var force = d3.crystal()
-			.gravity(1)
-			.charge(-3000)
-			.linkDistance(50)
-			.size([width, height]);
-
-		node.call(force.drag);
-
-		force.nodes(data.nodes).links(data.links)
-			.crystallize_nodes(node).crystallize_links(link)
-			.crystallize({
-				iter: 500000,			/* # of iterations simulation runs for - default is 100000 */
-				ms: 500,				/* Animation interval - default is 300 ms */
-				start_node: 'willow'	/* Node to start at - must be name of node */
+	var data_copy = function () {
+		var d = {nodes: [], links: []};
+		for (var i = 0; i < data.nodes.length; i++) d.nodes.push({name: data.nodes[i].name});
+		for (var i = 0; i < data.links.length; i++) {
+			d.links.push({
+				source: data.links[i].source.index,
+				target: data.links[i].target.index
 			});
+		}
+		return d;
 	};
 
 	/* Crystal layout - default params */
-	var box2_layout = function (svg, link, node, width, height) {
+	var box1_layout = function (data, link, node, width, height) {
 		var force = d3.crystal()
 			.gravity(1)
 			.charge(-3000)
@@ -166,16 +182,11 @@
 
 		force.nodes(data.nodes).links(data.links)
 			.crystallize_nodes(node).crystallize_links(link)
-			.crystallize({
-				iter: 500000,			/* # of iterations simulation runs for - default is 100000 */
-				ms: 500,				/* Animation interval - default is 300 ms */
-				start_node: 'willow'	/* Node to start at - must be name of node */
-			});
+			.crystallize({});
 	};
-
 
 	/* Crystal layout - specific params #1 */
-	var box3_layout = function (svg, link, node, width, height) {
+	var box2_layout = function (data, link, node, width, height) {
 		var force = d3.crystal()
 			.gravity(1)
 			.charge(-3000)
@@ -188,13 +199,14 @@
 			.crystallize_nodes(node).crystallize_links(link)
 			.crystallize({
 				iter: 500000,			/* # of iterations simulation runs for - default is 100000 */
-				ms: 500,				/* Animation interval - default is 300 ms */
-				start_node: 'willow'	/* Node to start at - must be name of node */
+				ms: 100,				/* Animation interval - default is 300 ms */
+				start_node: 'buffy'	/* Node to start at - must be name of node */
 			});
 	};
+
 
 	/* Crystal layout - specific params #2 */
-	var box4_layout = function (svg, link, node, width, height) {
+	var box3_layout = function (data, link, node, width, height) {
 		var force = d3.crystal()
 			.gravity(1)
 			.charge(-3000)
@@ -206,18 +218,52 @@
 		force.nodes(data.nodes).links(data.links)
 			.crystallize_nodes(node).crystallize_links(link)
 			.crystallize({
-				iter: 500000,			/* # of iterations simulation runs for - default is 100000 */
-				ms: 500,				/* Animation interval - default is 300 ms */
-				start_node: 'willow'	/* Node to start at - must be name of node */
+				iter: 50000,		
+				ms: 600,		
+				start_node: 'willow'
 			});
 	};
 
+	/* Regular layout - no crystal */
+	var box4_layout = function (data, link, node, width, height) {
+		var force = d3.layout.force()
+			.gravity(1)
+			.charge(-3000)
+			.linkDistance(50)
+			.size([width, height]);
+
+		node.call(force.drag);
+
+		force.nodes(data.nodes).links(data.links).start();
+		
+		force.on("tick", function () {
+			link.attr("x1", function (d) { return d.source.x; })
+				.attr("y1", function (d) { return d.source.y; })
+				.attr("x2", function (d) { return d.target.x; })
+				.attr("y2", function (d) { return d.target.y; });
+
+			node.attr("transform", function (d) {  return 'translate(' + [d.x, d.y] + ')'; });
+		});
+	};
 
 	var layouts = [box1_layout, box2_layout, box3_layout, box4_layout];
 
-	function create_base_layout (bid) {
+	// Code for each demo 
+	var code = [
+		"<strong>force.crystallize();</strong> // default params",
+		"<strong>force.crystallize({iter: 500000, ms: 100, start_node: 'buffy'});</strong> // faster",
+		"<strong>force.crystallize({iter: 50000, ms: 600, start_node: 'willow'});</strong> // slower",
+		"<strong>d3.force.layout();</strong> // original d3 force layout"
+	];
+
+	function create_base_layout (bid, data) {
+		var box_num = parseInt(bid.split("-")[0].split("box")[1]) - 1;
+
+		// Add code to base of box 
+		$(bid).append($("<p class='code' id='curr-code'>" + code[box_num] + "</p>"));
+
 		var width = $(bid).width();
-		var height = $(bid).height();
+		var height = $(bid).height() - 40;
 
 		// Svg container that will host the visualization
 		var svg = d3.select(bid).append("svg")
@@ -245,17 +291,19 @@
 			.attr("r", 15)
 			.attr("fill", "#fff");
 
-		var box_num = parseInt(bid.split("-")[0].split("box")[1]) - 1;
-		layouts[box_num](svg, link, node, width, height);
+		layouts[box_num](data, link, node, width, height);
 	}
 
 	var curr_play;
+	var num_plays = 0;
 
 	$(".glyphicon-play").click(function () {
-		// Destroy any other simulations 
-		$("svg").remove();
+		// Destroy any other simulations /codes
+		$("#svg-container").remove();
+		d3.select("svg").remove();
 		$(".link").remove();
 		$(".node").remove();
+		$("#curr-code").remove();
 
 		// Show the previous simulation's play button
 		if (curr_play) curr_play.show();
@@ -268,7 +316,10 @@
 		// box  
 		var bid = "#" + pid.split("-")[0];
 
-		create_base_layout(bid);
+		if (num_plays > 0) create_base_layout(bid, data_copy());
+		else create_base_layout(bid, data);
+
+		num_plays++;
 	});
 
 
