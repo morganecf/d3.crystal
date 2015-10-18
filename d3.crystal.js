@@ -177,7 +177,10 @@ d3.crystal = function () {
 			// When we're done, remove the paths and show the real edges 
 			else {
 				edge_ids.forEach(function (eid) { d3.select('#' + eid).style("visibility", "visible"); })
-				$(".temp-path").remove();
+				var elems = document.getElementsByClassName("temp-path");
+    			while(elems.length > 0){
+        			elems[0].parentNode.removeChild(elems[0]);
+    			};
 
 				// Also resume the force 
 				crystal_force.start();

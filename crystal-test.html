@@ -28,9 +28,6 @@
 <!-- D3.js --> 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 
-<!-- Jquery --> 
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-
 <!-- D3.Crystal --> 
 <script src="d3.crystal.js"></script>
 
@@ -76,7 +73,7 @@
 	  .attr("height", 600)
 	  .attr("id", "svg_container");
 
-	var crystal = d3.crystal()
+	var force = d3.crystal()
 		.gravity(1)
 		.charge(-3000)
 		.linkDistance(50)
@@ -101,9 +98,9 @@
 		.attr("id", function (d) { return d.name; })
 		.attr("r", 15)
 		.attr("fill", "#fff")
-		.call(crystal.drag);
+		.call(force.drag);
 
-	crystal.nodes(data.nodes).links(data.links)
+	force.nodes(data.nodes).links(data.links)
 		.crystallize_nodes(node).crystallize_links(link)
 		.crystallize();
 	
