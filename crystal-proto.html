@@ -31,9 +31,6 @@
 <!-- Jquery --> 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 
-<!-- D3.Crystal --> 
-<script src="d3.crystal.js"></script>
-
 <script type="text/javascript">
 
 	// Helper functions
@@ -129,7 +126,7 @@
 			.call(force.drag);
 		
 		//animate(node[0], link[0], 600, force, node, link, 'buffy', true);
-		//animate(node[0], link[0], 300, force, node, link);
+		animate(node[0], link[0], 300, force, node, link);
 
 	}, 10);
 
@@ -234,6 +231,7 @@
 			// When we're done, remove the paths and show the real edges 
 			else {
 				edge_ids.forEach(function (eid) { d3.select('#' + eid).style("visibility", "visible"); })
+				console.log(edge_ids);
 				$(".temp-path").remove();
 
 				// Also resume the force 
