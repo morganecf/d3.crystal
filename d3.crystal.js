@@ -1,4 +1,6 @@
 /*
+	Author: Morgane Ciot, 2015
+
 	USAGE: 
 
 	// Initialize 
