@@ -1,5 +1,5 @@
 # d3.crystal
-D3 plugin to animate force-directed layouts. View a demo here: http://cs.mcgill.ca/~mciot/crystal-demo.html
+D3 plugin to animate force-directed layouts in a less chaotic way. View a demo here: http://cs.mcgill.ca/~mciot/crystal-demo.html
 
 Usage
 -----
