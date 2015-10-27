@@ -4,7 +4,7 @@ D3 plugin to animate force-directed layouts. View a demo here: http://cs.mcgill.
 Usage
 -----
 
-Initialize the force layout as a d3.crystal object. 
+Create the force layout as a d3.crystal object, with the usual parameters. 
 
 ```
 var force = d3.crystal()
@@ -39,7 +39,7 @@ var node = svg.selectAll("circle")
 	.call(force.drag);
 ```
 
-Initialize the layout. This requires passing in the node/link data and the node/link svg objects. 
+Initialize/start the layout. This requires passing in the node/link data and the node/link svg objects. 
 
 ```
 force.nodes(data.nodes).links(data.links)
