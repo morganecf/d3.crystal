@@ -39,7 +39,7 @@ var node = svg.selectAll("circle")
 	.call(force.drag);
 ```
 
-Initialize/start the layout. This requires passing in the node/link data and the node/link svg objects. 
+Initialize and start the layout. This requires passing in the node/link data and the node/link svg objects. 
 
 ```
 force.nodes(data.nodes).links(data.links)
