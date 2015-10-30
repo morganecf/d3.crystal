@@ -85,6 +85,11 @@ d3.crystal = function () {
 	force.crystallize_links = function (svg_link) {
 		svg = d3.select(svg_link[0].parentNode);
 		link = svg_link;
+
+		link_style['stroke-width'] = link.attr('stroke-width');
+		link_style.stroke = link.attr('stroke');
+		link_style.opacity = link.attr('opacity');
+		
 		return this;
 	}
 
@@ -163,6 +168,9 @@ d3.crystal = function () {
 						path = svg_container.append("path")
 							.attr("d", line(points))
 							.attr("class", "temp-path")
+							.attr("stroke", link_svg_style.stroke)
+							.attr("stroke-width", link_svg_style['stroke-width'])
+							.attr("opacity", link_svg_style.opacity)
 							.transition()
 							.duration(ms)
 							.attrTween("stroke-dasharray", tweenDash)
