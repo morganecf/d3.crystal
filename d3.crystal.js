@@ -148,6 +148,7 @@ d3.crystal = function () {
 		var link_svg = link;
 		var node_svg = node;
 		var svg_container = svg;
+		var link_svg_style = link_style;
 
 		var step = function () {
 			if (hidden.length > 0) {
