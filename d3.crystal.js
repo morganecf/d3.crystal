@@ -76,6 +76,9 @@ d3.crystal = function () {
 	/* The svg nodes and links and container */
 	var node, link, svg;
 
+	/* SVG link styling */
+	var link_style = {};
+
 	/* Load the svg nodes and links */
 	force.crystallize_nodes = function (svg_node) {
 		svg = d3.select(svg_node[0].parentNode);
