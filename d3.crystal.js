@@ -20,6 +20,12 @@
 	// or .crystallize({'iter': 50000, 'ms': 500, 'start_node': 'start'}) 
 	// to specify simulation iterations, animation interval and start node use the iter, ms and start_node attributes
 	// start_node must be the name of the start node -- will change this to just be the node 
+
+	// TO DO :
+		// shouldn't rely on name key
+		// nodes should appear directly after links 
+		// i think there are some issues with styling 
+		// links should appear underneath nodes 
 */
 
 d3.crystal = function () {
